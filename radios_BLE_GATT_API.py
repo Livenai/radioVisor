@@ -12,7 +12,7 @@ def readPos(device):
         z = location["position_data"]["z_position"]
         return [x,y,z]
     except:
-        return [9999,9999,9999]
+        return [None,None,None]
 
 
 def getNearDevices():

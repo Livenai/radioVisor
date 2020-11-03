@@ -2,14 +2,15 @@
 
 
 import multiprocessing, os, json, time, traceback
-from PyQt5.QtCore import QTimer
+import radios_BLE_GATT_API as blapi
+import psutil
 
 
 parent_folder = os.path.abspath(os.path.dirname(__file__))
 saving_folder = os.path.join(parent_folder, "tracking")
 
-MAX_TRYS = 5
-MAX_DELAY_SECS = 10
+MAX_TRYS = 1
+MAX_DELAY_SECS = 60
 
 
 def f(paramList):
@@ -19,17 +20,24 @@ def f(paramList):
     Esta funcion se encarga de recoger los datos de posicion de
     cada dispositivo y de escribirlos en su fichero correspondiente.
     """
-    idHilo = str(multiprocessing.current_process()).split("-")[1][0]
+    idHilo = str(multiprocessing.current_process()).split("-")[1].split(",")[0]
     print("//////////   hilo: " + idHilo + "   //////////")
+    print(multiprocessing.current_process())
     print(paramList)
 
     trys = 0
+
 
     while trys < MAX_TRYS:
         try:
             # Obtenemos el nombre y peso del dispositivo
             name = paramList[0]
-            pos = paramList[1] # cambiar por funcion de la api
+            pos  = blapi.readPos(paramList[1])
+            if None in pos:
+                time.sleep(1)
+                raise Exception("pos = None")
+            else:
+                print("------------->>  Pos de " + str(idHilo) + " obtenida con exito")
 
             # Comprobamos si el archivo existe
             saving_file = os.path.join(saving_folder, name+".json")
@@ -65,6 +73,13 @@ def f(paramList):
 
 def iniciarPool():
     """ Obtiene la lista de dispositivos y levanta un proceso ejecutando f() para cada uno. """
+    # Comprueba la memoria RAM usada en el sistema. Si supera el 80%, se sale del programa
+    mem = psutil.virtual_memory()
+    percentMem = mem.percent
+    print("Memory Usage:  ", percentMem, "%")
+    if percentMem > 80.0:
+        raise Exception("[!]    MEMORIA RAM AL 80%   [!]")
+
     # Creamos el directiorio tracking/ si no existe ya
     print("Folder: ", parent_folder)
 
@@ -75,8 +90,17 @@ def iniciarPool():
         print("Carpeta tracking/ ENCONTRADA")
 
 
-    # Obtenemosla lista de dispositivos y la formateamos
-    deviceList = {"a": [1,1], "b": [2,2], "c": [3,3]}
+    # Obtenemos la lista de dispositivos y la formateamos
+    listDone = False
+    while not listDone:
+        try:
+            deviceList = blapi.getNearDevices() # comprobar si es lista o dicc
+            if len(deviceList) > 0:
+                listDone=True
+            else:
+                print("[!] No hay dispositivos al alcance.")
+        except:
+            print("[!] Error al buscar los dispositivos cercanos.")
 
     paramList = list(deviceList.items())
 
@@ -84,9 +108,14 @@ def iniciarPool():
     print("paramList:\n" + str(paramList) + "\n\n")
 
     # Montamos el pool de trabajo
-    p = multiprocessing.Pool(len(deviceList))
-    solus = p.map(f,paramList)
-
+    try:
+        p = multiprocessing.Pool(len(deviceList))
+        solus = p.map(f,paramList)
+        p.close()
+        p.join()
+        del p
+    except Exception as e:
+        print(e)
 
 
 
@@ -96,6 +125,7 @@ def iniciarPool():
 #######  INICIO  #######
 if __name__ == "__main__":
     while True:
+        print("===========================================================================================")
         # Guardamos el timestamp
         t1 = time.time()
 
@@ -107,7 +137,8 @@ if __name__ == "__main__":
 
         # Calculamos la diferencia y el tiempo restante
         diff = t2-t1
-        rest = MAX_DELAY_SECS - diff
+        rest = (MAX_DELAY_SECS - diff) if diff < MAX_DELAY_SECS else 0
+        print("Iteracion acabada.     Tiempo restante: " , rest)
 
         # Si rest es positivo, esperamos esa cantidad
         time.sleep(rest)

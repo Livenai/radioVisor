@@ -56,25 +56,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.getPosTimer = QTimer()
         self.getPosTimer.setInterval(100)
         self.getPosTimer.timeout.connect(self.getPosTimer_rang)
-        self.reduFactor = 0.4
+        self.reduFactor = 0.3
         self.deviceDicc = {}
 
         self.A1 = np.array([0,0])
-        self.A2 = np.array([2000,0])
-        self.A3 = np.array([2000,1000])
-        self.A4 = np.array([0,1000])
+        self.A2 = np.array([6500,-1840])
+        self.A3 = np.array([6600,6760])
+        self.A4 = np.array([0,6820])
 
 
         # graficos
         self.scene  = QGraphicsScene()
         self.drawBox.setScene(self.scene)
 
+        self.drawBox.scale(1,-1)
 
         # default drawers
         self.greenBrush = QBrush(Qt.green)
         self.grayBrush = QBrush(Qt.gray)
         self.pen = QPen(Qt.black)
-
 
         self.drawAnchorLines()
 
