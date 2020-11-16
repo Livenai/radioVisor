@@ -44,8 +44,14 @@
          <x>0</x>
          <y>0</y>
          <width>818</width>
-         <height>352</height>
+         <height>800</height>
         </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <widget class="QGroupBox" name="groupBox">
         <property name="geometry">
@@ -53,8 +59,14 @@
           <x>0</x>
           <y>-20</y>
           <width>821</width>
-          <height>371</height>
+          <height>800</height>
          </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="title">
          <string/>
