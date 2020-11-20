@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1158</width>
-    <height>841</height>
+    <width>1253</width>
+    <height>981</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,66 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="4">
-     <widget class="QScrollArea" name="radiosBox">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>150</height>
-       </size>
-      </property>
-      <property name="lineWidth">
-       <number>3</number>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOn</enum>
-      </property>
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustToContents</enum>
-      </property>
-      <property name="widgetResizable">
-       <bool>false</bool>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>818</width>
-         <height>800</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>-20</y>
-          <width>821</width>
-          <height>800</height>
-         </rect>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="title">
-         <string/>
-        </property>
-       </widget>
-      </widget>
-     </widget>
-    </item>
     <item row="2" column="5" colspan="2">
      <widget class="QGroupBox" name="groupBox_3">
       <property name="minimumSize">
@@ -90,10 +30,15 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
-         <width>80</width>
-         <height>23</height>
+         <y>200</y>
+         <width>111</width>
+         <height>41</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>Load Logs</string>
@@ -102,7 +47,7 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>10</x>
          <y>30</y>
          <width>84</width>
          <height>15</height>
@@ -115,7 +60,7 @@
       <widget class="QLabel" name="coordsLabel">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>100</x>
          <y>30</y>
          <width>91</width>
          <height>16</height>
@@ -134,6 +79,12 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>7080</height>
+       </size>
       </property>
       <property name="cursor" stdset="0">
        <cursorShape>CrossCursor</cursorShape>
@@ -166,9 +117,9 @@
       <widget class="QPushButton" name="invertAxisButton">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>20</y>
-         <width>89</width>
+         <x>8</x>
+         <y>30</y>
+         <width>81</width>
          <height>23</height>
         </rect>
        </property>
@@ -180,7 +131,7 @@
        <property name="geometry">
         <rect>
          <x>60</x>
-         <y>50</y>
+         <y>60</y>
          <width>30</width>
          <height>27</height>
         </rect>
@@ -203,9 +154,9 @@
       <widget class="QLabel" name="zoomLabel">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>90</y>
-         <width>89</width>
+         <x>10</x>
+         <y>100</y>
+         <width>81</width>
          <height>21</height>
         </rect>
        </property>
@@ -216,8 +167,8 @@
       <widget class="QPushButton" name="decreaseZoomButton">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>50</y>
+         <x>10</x>
+         <y>60</y>
          <width>30</width>
          <height>27</height>
         </rect>
@@ -239,6 +190,288 @@
       </widget>
      </widget>
     </item>
+    <item row="2" column="4">
+     <widget class="QScrollArea" name="radiosBox">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>250</height>
+       </size>
+      </property>
+      <property name="lineWidth">
+       <number>3</number>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContents</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>915</width>
+         <height>1200</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>-2</y>
+          <width>911</width>
+          <height>1201</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <kerning>true</kerning>
+         </font>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="title">
+         <string/>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+        <widget class="QGroupBox" name="reproduccionBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>911</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Reproduccion</string>
+         </property>
+         <widget class="QPushButton" name="playStopButton">
+          <property name="geometry">
+           <rect>
+            <x>310</x>
+            <y>30</y>
+            <width>41</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>&gt;</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="speedSecBox">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>50</y>
+            <width>121</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="suffix">
+           <string> seg / tick</string>
+          </property>
+          <property name="maximum">
+           <number>59</number>
+          </property>
+          <property name="value">
+           <number>1</number>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="speedMinBox">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>20</y>
+            <width>121</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="suffix">
+           <string> min / tick</string>
+          </property>
+          <property name="maximum">
+           <number>7200</number>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>30</y>
+            <width>71</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Velocidad:</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_3">
+          <property name="geometry">
+           <rect>
+            <x>230</x>
+            <y>40</y>
+            <width>71</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Play/Pause</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_4">
+          <property name="geometry">
+           <rect>
+            <x>380</x>
+            <y>20</y>
+            <width>91</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Posicion actual</string>
+          </property>
+         </widget>
+         <widget class="QSlider" name="playPositionSlider">
+          <property name="geometry">
+           <rect>
+            <x>380</x>
+            <y>40</y>
+            <width>521</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="maximum">
+           <number>500</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksAbove</enum>
+          </property>
+          <property name="tickInterval">
+           <number>60</number>
+          </property>
+         </widget>
+         <widget class="QLabel" name="actualPlayLabel">
+          <property name="geometry">
+           <rect>
+            <x>500</x>
+            <y>20</y>
+            <width>191</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>----/--/--  --:--:--</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="minPlayLabel">
+          <property name="geometry">
+           <rect>
+            <x>360</x>
+            <y>60</y>
+            <width>191</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>----/--/--  --:--:--</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="maxPlayLabel">
+          <property name="geometry">
+           <rect>
+            <x>770</x>
+            <y>60</y>
+            <width>141</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>----/--/--  --:--:--</string>
+          </property>
+         </widget>
+         <widget class="QSpinBox" name="speedTickBox">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>50</y>
+            <width>91</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="suffix">
+           <string> tick / s</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>20</number>
+          </property>
+          <property name="value">
+           <number>1</number>
+          </property>
+         </widget>
+        </widget>
+        <widget class="Line" name="line">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>90</y>
+           <width>881</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -246,7 +479,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1158</width>
+     <width>1253</width>
      <height>20</height>
     </rect>
    </property>

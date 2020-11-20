@@ -46,6 +46,8 @@ class logControl():
         # primeros pasos
         self.setColors()
         self.createAllObjects()
+        self.slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.slider.setTickInterval(60) # ticks cada minuto
 
 
 
@@ -229,6 +231,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # {nombre: {label, checkBox, slider}}
         self.logs = {}
 
+        # reproduccion
+        self.playTimer = QTimer()
+        self.playTimer.setInterval(1000)
+        self.minPlaySec = 0
+        self.maxPlaySec = 0
+        self.actualPlaySec = 0
+
 
 
 
@@ -244,11 +253,50 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.loadLogsButton.clicked.connect(self.loadLogs)
 
-
-
+        self.playTimer.timeout.connect(self.playTimerRang)
+        self.playStopButton.clicked.connect(self.playStopButton_clicked)
+        self.playPositionSlider.valueChanged.connect(self.playPositionSlider_changed)
+        self.speedTickBox.valueChanged.connect(self.speedTickBox_changed)
 
         # inicio
         self.drawAnchorLines()
+        ########################################################################
+
+
+    def playPositionSlider_changed(self, newValue):
+        self.actualPlaySec = newValue
+
+        strDate = datetime.fromtimestamp(newValue).strftime("%Y/%m/%d  %H:%M:%S")
+        self.actualPlayLabel.setText(strDate)
+
+    def playStopButton_clicked(self):
+        if self.playStopButton.isChecked():
+            # activamos el playTimer
+            self.playTimer.start()
+            self.playStopButton.setText("||")
+        else:
+            # paramos el playTimer
+            self.playTimer.stop()
+            self.playStopButton.setText(">")
+
+    def speedTickBox_changed(self, newValue):
+        ms = (1 / newValue) * 1000
+        self.playTimer.setInterval(ms)
+
+    def playTimerRang(self):
+        addition = (self.speedMinBox.value()*60) + self.speedSecBox.value()
+        newValue = self.playPositionSlider.value() + addition
+        self.playPositionSlider_changed(newValue)
+        self.playPositionSlider.setValue(newValue)
+
+        # saber que logs entan checkeados
+        # para cada log:
+            # saber entre que dos puntos estamos de su log
+            # sacar la recta que unen los puntos e interpolar el punto en el que deberiamos estar
+            # mostrar el punto con el color correspondiente
+
+
+
 
 
     def increaseZoom(self):
@@ -274,37 +322,38 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         labelX = 10
         checkBoxX = 120
         sliderX = 150
-        timeLabelX = 670
+        timeLabelX = 770
 
         Y_phase = 30
+        Y_initial_phase = 100
 
         for i in range(0,log_num):
 
             label = QtWidgets.QLabel(parent)
-            label.setGeometry(QtCore.QRect(0, 0, 85, 21))
+            label.setGeometry(QtCore.QRect(0, 0, 110, 21))
             label.setObjectName("logLabel_" + str(i))
             label.setText("test_" + str(i))
-            label.move(labelX, Y_phase*i)
+            label.move(labelX, (Y_phase*i)+Y_initial_phase)
             label.show()
 
             checkBox = QtWidgets.QCheckBox(parent)
             checkBox.setGeometry(QtCore.QRect(10, 20, 85, 21))
             checkBox.setObjectName("logCheckBox_" + str(i))
-            checkBox.move(checkBoxX, Y_phase*i)
+            checkBox.move(checkBoxX, (Y_phase*i)+Y_initial_phase)
             checkBox.show()
 
             slider = QtWidgets.QSlider(parent)
-            slider.setGeometry(QtCore.QRect(30, 20, 500, 16))
+            slider.setGeometry(QtCore.QRect(30, 30, 600, 25))
             slider.setOrientation(QtCore.Qt.Horizontal)
             slider.setObjectName("logSlider_" + str(i))
-            slider.move(sliderX, Y_phase*i)
+            slider.move(sliderX, (Y_phase*i)+Y_initial_phase+2)
             slider.show()
 
             timeLabel = QtWidgets.QLabel(parent)
             timeLabel.setGeometry(QtCore.QRect(0, 0, 145, 21))
             timeLabel.setObjectName("timeLabel_" + str(i))
             timeLabel.setText("--/--/--  --:--:--")
-            timeLabel.move(timeLabelX, Y_phase*i)
+            timeLabel.move(timeLabelX, (Y_phase*i)+Y_initial_phase)
             timeLabel.show()
 
 
@@ -339,6 +388,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             # guardamos en el dicc
             self.logs[i] = lc
+
+        # preparamos el panel de reproduccion
+        self.reproduccionBox.setEnabled(True)
+        allKeys = []
+        for key in self.logs:
+            [allKeys.append(str(x)) for x in self.logs[key].json.keys()]
+
+        print("Keys: ", len(allKeys))
+        allKeys = np.array(allKeys).astype(np.float)
+        self.minPlaySec = np.min(allKeys)
+        self.maxPlaySec = np.max(allKeys)
+        self.actualPlaySec = self.minPlaySec
+        self.playPositionSlider.setMinimum(self.minPlaySec)
+        self.playPositionSlider.setMaximum(self.maxPlaySec)
+
+        minDate = datetime.fromtimestamp(self.minPlaySec).strftime("%Y/%m/%d  %H:%M:%S")
+        maxDate = datetime.fromtimestamp(self.maxPlaySec).strftime("%Y/%m/%d  %H:%M:%S")
+        self.minPlayLabel.setText(minDate)
+        self.maxPlayLabel.setText(maxDate)
+        self.actualPlayLabel.setText(minDate)
 
 
         print("--- Creation done ---")
