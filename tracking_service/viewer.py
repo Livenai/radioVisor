@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QGraphicsItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView, QGraphicsItem, QWidget
 from PyQt5.QtGui import QPen, QBrush, QColor, QFont
 from PyQt5.QtCore import QTimer
 from PyQt5.Qt import Qt
@@ -31,6 +31,7 @@ class logControl():
         self.dotSize = 10
         self.dotBorderSize = 2
         self.opacityTailLen = 40
+        self.reproduccionDot = None # Punto en la escena que se mueve con el panel de reproduccion
 
         # default
         self.slider.setEnabled(False)
@@ -180,7 +181,7 @@ class logControl():
             # Guardamos el conjunto en self.elements
             self.elements[i] = [destinyDot, line, key]
 
-        print(self.filename, " log elements created succesfully")
+        print(self.filename, "\t log elements created succesfully")
 
 
 
@@ -257,10 +258,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.playStopButton.clicked.connect(self.playStopButton_clicked)
         self.playPositionSlider.valueChanged.connect(self.playPositionSlider_changed)
         self.speedTickBox.valueChanged.connect(self.speedTickBox_changed)
+        self.enableReproduccionBoxCheckBox.stateChanged.connect(self.enableReproduccionBoxCheckBox_changed)
 
         # inicio
         self.drawAnchorLines()
         ########################################################################
+
+    def enableReproduccionBoxCheckBox_changed(self):
+        if self.enableReproduccionBoxCheckBox.isChecked():
+            [x.setEnabled(True) for x in self.reproduccionBox.findChildren(QWidget)]
+        else:
+            if self.playStopButton.isChecked():
+                # paramos el playTimer
+                self.playStopButton.click()
+            # Desactivamos los controles
+            [x.setEnabled(False) for x in self.reproduccionBox.findChildren(QWidget)]
+            self.enableReproduccionBoxCheckBox.setEnabled(True)
+            # Quitamos los puntos de la escena
+            for k in self.logs.keys():
+                log = self.logs[k]
+                if log.reproduccionDot is not None:
+                    self.scene.removeItem(log.reproduccionDot)
+                    log.reproduccionDot = None
+
 
 
     def playPositionSlider_changed(self, newValue):
@@ -290,10 +310,43 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.playPositionSlider.setValue(newValue)
 
         # saber que logs entan checkeados
-        # para cada log:
-            # saber entre que dos puntos estamos de su log
-            # sacar la recta que unen los puntos e interpolar el punto en el que deberiamos estar
+        checkedLogs = []
+        for k in self.logs.keys():
+            log = self.logs[k]
+            if log.checkBox.isChecked():
+                checkedLogs.append(log)
+            else:
+                if log.reproduccionDot is not None:
+                    self.scene.removeItem(log.reproduccionDot)
+                    log.reproduccionDot = None
+
+
+
+        # para cada log checkeado:
+        for log in checkedLogs:
+            # saber entre que dos puntos de tiempo estamos de su log
+            actual = self.actualPlaySec
+            logKeysList = [k for k in log.json.keys()]
+            #logKeysList.sort(key=lambda key: float(str(key)))
+
+            x_list = [log.json[k]['x'] for k in logKeysList]
+            y_list = [log.json[k]['y'] for k in logKeysList]
+
+            # interpolar el punto actual
+            interpolated_X = np.interp(actual, logKeysList, x_list)
+            interpolated_Y = np.interp(actual, logKeysList, y_list)
+
             # mostrar el punto con el color correspondiente
+            x = interpolated_X * self.reduFactor
+            y = interpolated_Y * self.reduFactor
+            if log.reproduccionDot is None:
+                log.reproduccionDot = self.scene.addEllipse(0,0, log.dotSize,log.dotSize, QPen(Qt.black, log.dotBorderSize), log.brush)
+                log.reproduccionDot.setPos(x-(log.dotSize/2),y-(log.dotSize/2))
+            else:
+                log.reproduccionDot.setPos(x-(log.dotSize/2),y-(log.dotSize/2))
+
+
+
 
 
 
@@ -390,7 +443,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.logs[i] = lc
 
         # preparamos el panel de reproduccion
+        [x.setEnabled(False) for x in self.reproduccionBox.findChildren(QWidget)]
         self.reproduccionBox.setEnabled(True)
+        self.enableReproduccionBoxCheckBox.setEnabled(True)
+
         allKeys = []
         for key in self.logs:
             [allKeys.append(str(x)) for x in self.logs[key].json.keys()]
@@ -409,6 +465,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.maxPlayLabel.setText(maxDate)
         self.actualPlayLabel.setText(minDate)
 
+        self.loadLogsButton.setEnabled(False)
 
         print("--- Creation done ---")
 
