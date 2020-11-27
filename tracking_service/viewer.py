@@ -11,6 +11,53 @@ from PyQt5.QtCore import QTimer
 from PyQt5.Qt import Qt
 
 
+
+class estela():
+    """ Construye y representa una estela, es decir, una serie de elementos repetidos que desaparecen con las iteraciones. """
+
+    def __init__(self, MainWindow, leader, maxDots, ticks_per_dot, dotSize, brush, pen):
+        self.MainWindow = MainWindow
+        self.leader = leader # referencia al punto maestro paraobtener sus coordenadas
+        self.maxDots = maxDots
+        self.ticks_per_dot = ticks_per_dot
+        self.dotSize = dotSize
+        self.brush = brush
+        self.pen = pen
+
+        self.iterCounter = 0
+        self.elements = []
+        self.filled = False # booleano para optimizar el rendimiento una vez se ha llenado la lista
+
+    def iniciarEstela(self):
+        """ Inicia el contador que va dejando elementos con las iteracciones. """
+
+    def countIter(self):
+        """ Añade una iterraccion al contador y realiza las acciones pertienentes respecto del nuevo valor. """
+        self.iterCounter += 1
+
+        if self.iterCounter >= self.ticks_per_dot:
+            # Toca añadir un nuevo elemento a la estela...
+            rec = self.leader.boundingRect()
+
+            x = self.leader.scenePos().x() + (rec.width()/2)
+            y = self.leader.scenePos().y() + (rec.height()/2)
+            newDot = self.MainWindow.scene.addEllipse(0,0, self.dotSize,self.dotSize, self.pen, self.brush)
+            newDot.setPos(x-(self.dotSize/2),y-(self.dotSize/2))
+            newDot.setZValue(-1)
+
+            self.elements.append(newDot)
+
+            # Eliminar el ultimo elemento, si toca...
+            if self.filled:
+                victim = self.elements.pop(0)
+                self.MainWindow.scene.removeItem(victim)
+            elif len(self.elements) >= self.maxDots:
+                self.filled = True
+
+            # Y redimensionar el resto descendentemente.[WIP]
+
+
+
 class logControl():
     def __init__(self, label, checkBox, slider, timeLabel, filename, fileroute, MainWindow_reference):
         # params
@@ -32,6 +79,8 @@ class logControl():
         self.dotBorderSize = 2
         self.opacityTailLen = 40
         self.reproduccionDot = None # Punto en la escena que se mueve con el panel de reproduccion
+        self.estela = None
+        self.isWhite = False
 
         # default
         self.slider.setEnabled(False)
@@ -112,6 +161,7 @@ class logControl():
         elif "Bl" in self.filename:
             self.pen = QPen(Qt.black, self.lineSize)
             self.brush = QBrush(Qt.white)
+            self.isWhite = True
         elif "Li" in self.filename:
             self.pen = QPen(Qt.magenta, self.lineSize)
             self.brush = QBrush(Qt.magenta)
@@ -342,8 +392,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if log.reproduccionDot is None:
                 log.reproduccionDot = self.scene.addEllipse(0,0, log.dotSize,log.dotSize, QPen(Qt.black, log.dotBorderSize), log.brush)
                 log.reproduccionDot.setPos(x-(log.dotSize/2),y-(log.dotSize/2))
+
+                # Creamos la estela (MainWindow, leader, maxDots, ticks_per_dot, dotSize, brush, pen)
+                brush = [QBrush(Qt.black) if log.isWhite else log.brush][0]
+                log.estela = estela(self, log.reproduccionDot, 30, 1, 7, brush, QPen(Qt.NoPen))
+
             else:
                 log.reproduccionDot.setPos(x-(log.dotSize/2),y-(log.dotSize/2))
+                # Actualizamos la estela
+                log.estela.countIter()
 
 
 
