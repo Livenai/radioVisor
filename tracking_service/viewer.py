@@ -10,6 +10,7 @@ from PyQt5.QtGui import QPen, QBrush, QColor, QFont
 from PyQt5.QtCore import QTimer
 from PyQt5.Qt import Qt
 
+from os import makedirs , path
 
 
 class estela():
@@ -310,6 +311,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.speedTickBox.valueChanged.connect(self.speedTickBox_changed)
         self.enableReproduccionBoxCheckBox.stateChanged.connect(self.enableReproduccionBoxCheckBox_changed)
 
+        self.saveInterpolatedLogsButton.clicked.connect(self.saveInterpolatedLogs)
+
         # inicio
         self.drawAnchorLines()
         ########################################################################
@@ -404,9 +407,44 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 
+    def saveInterpolatedLogs(self):
+        print("Saving logs...")
+
+        if not path.exists('tracking_logs_interpolated'):
+            makedirs('tracking_logs_interpolated')
+
+        checkedLogs = [log for log in self.logs.values() if log.checkBox.isChecked()]
+
+        # Comprobamos que haya algun log checkeado
+        if len(checkedLogs) == 0:
+            print("[!] No hay ningun Log seleccionado.")
+            return None
+
+        #Calculo de la franja de tiempo para interpolar solo con los logs seleccionados
+        allTimeStamps = []
+        for log in checkedLogs:
+            allTimeStamps = [float(x) for x in log.json.keys()]
+
+        minTimeStamp = min(allTimeStamps)
+        maxTimeStamp = max(allTimeStamps)
+        increment = (self.speedMinBox.value()*60) + self.speedSecBox.value()
+        # time stamps interpolados
+        timeStamps = np.arange(minTimeStamp, maxTimeStamp, increment)
 
 
-
+        for log in checkedLogs:
+            logTimeStamps = list(log.json.keys())
+            x_list = [pos['x'] for pos in log.json.values()]
+            y_list = [pos['y'] for pos in log.json.values()]
+            interpolated_X = np.interp(timeStamps, logTimeStamps, x_list)
+            interpolated_Y = np.interp(timeStamps, logTimeStamps, y_list)
+            with open('tracking_logs_interpolated/' + log.filename, 'w') as outfile:
+                data = {}
+                for i, t in  enumerate(timeStamps):
+                    data[str(t)] = {'x': interpolated_X[i], 'y':interpolated_Y[i]}
+                json.dump(data, outfile)
+        print("Logs saved:")
+        [print("\t" + str(log.label.text())) for log in checkedLogs]
 
 
     def increaseZoom(self):
@@ -522,6 +560,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.maxPlayLabel.setText(maxDate)
         self.actualPlayLabel.setText(minDate)
 
+        self.saveInterpolatedLogsButton.setEnabled(True)
         self.loadLogsButton.setEnabled(False)
 
         print("--- Creation done ---")

@@ -29,8 +29,8 @@
       <widget class="QPushButton" name="loadLogsButton">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>200</y>
+         <x>30</x>
+         <y>170</y>
          <width>111</width>
          <height>41</height>
         </rect>
@@ -68,6 +68,32 @@
        </property>
        <property name="text">
         <string>[x,y,z]</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="saveInterpolatedLogsButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>161</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <strikeout>false</strikeout>
+         <kerning>true</kerning>
+        </font>
+       </property>
+       <property name="text">
+        <string>Save Interpolated Logs</string>
+       </property>
+       <property name="autoRepeat">
+        <bool>false</bool>
        </property>
       </widget>
      </widget>
